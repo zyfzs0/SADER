@@ -26,7 +26,7 @@ model:
     network_wrapper: "sgm.modules.diffusionmodules.wrappers.TemporalCloudRemovalWrapper"
 
     network_config:
-      target: sgm.modules.diffusionmodules.k_diffusion.image_unet_TemporalAdm_Final.UNetModel #
+      target: sgm.modules.diffusionmodules.k_diffusion.image_unet_TemporalAdm_New.UNetModel #
       params:
         image_size: 256
         in_channels: 26

@@ -71,11 +71,8 @@ model:
       target: sgm.models.autoencoder.IdentityFirstStage
 
     loss_fn_config:
-      target: sgm.modules.diffusionmodules.loss.TemporalResidualDiffusion_AlphaMaskLoss_Seq
+      target: sgm.modules.diffusionmodules.loss.TemporalResidualDiffusion
       params:
-        attention_multiple : 4.0
-        unattention_multiple : 2.0
-        threshold : 0.99
         loss_weighting_config:
           target: sgm.modules.diffusionmodules.loss_weighting.TemporalResidualEDMWeighting
           params:
