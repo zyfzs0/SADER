@@ -1,0 +1,260 @@
+model:
+  base_learning_rate: 1.0e-3
+  target: sgm.models.diffusion.TemporalResidualDiffusionEngine
+  params:
+    input_key: "target"
+    mean_key: "S2"
+    masks_key: "masks"
+    mask_key: "masks"
+    compile_model: False
+    use_ema: True
+    use_flash_attn2: True
+    ckpt_path: "/mnt/data2/sw/chenqa/RS/TGRS-CREDM/ts_design_mask/2025-10-15T04-38-05_example_training-sentinelts_new_mask/checkpoints/last.ckpt"
+
+    sigma_st_config:
+      target: sgm.modules.diffusionmodules.sigma2st.EDMSigma2St
+      params:
+        alpha: 3.0 #0.5
+
+    denoiser_config:
+      target: sgm.modules.diffusionmodules.denoiser.TemporalResidualDenoiser
+      params:
+        scaling_config:
+          target: sgm.modules.diffusionmodules.denoiser_scaling.TemporalResidualEDMScaling
+          params:
+            sigma_input: 1.0
+            sigma_mu: 1.0
+
+    network_wrapper: "sgm.modules.diffusionmodules.wrappers.TemporalCloudRemovalWrapper"
+
+    network_config:
+      target: sgm.modules.diffusionmodules.k_diffusion.image_unet_TemporalAdm_New.UNetModel #
+      params:
+        image_size: 256
+        in_channels: 40
+        model_channels: 64
+        noise_channels: 13
+        condition_net_multiple: 1
+        out_channels: 13
+        num_res_blocks: 2 # 4
+        attention_resolutions: [32] #[32,16,8]
+        sequence_length: 3
+        dropout: 0.1
+        channel_mult: [1, 2, 4, 8]
+        attention_names: ["local", "local", "local", "local"]
+        patch_size: [4, 4]
+        kernel_size: [5, 5]
+        neighbor_heads: 16
+        conv_resample: True
+        dims: 2
+        use_checkpoint: False
+        use_fp16: False
+        num_heads: 1
+        num_head_channels: -1
+        num_heads_upsample: -1
+        use_scale_shift_norm: True
+        resblock_updown: True
+        use_new_attention_order: False
+        time_emb_fourier: True
+
+    conditioner_config:
+      target: sgm.modules.GeneralConditioner
+      params:
+        emb_models:
+          - is_trainable: True
+            input_key: "S2_combined"
+            ucg_rate: 0.0
+            target: sgm.modules.encoders.modules.IndentityEmbedder
+          # - is_trainable: True
+          #   input_key:  "S1"
+          #   ucg_rate: 0.0
+          #   target: sgm.modules.encoders.modules.ImageTransformerEncoderInterface
+          #   params:
+          #     in_channels: 2
+          #     patch_size: [4,4]
+          #     widths: [256,512,768]
+          #     depths: [2,2,16]
+          #     d_ffs: [512,1024,1536]
+          #     self_attns: [
+          #         {"type": "neighborhood", "d_head": 64, "kernel_size": 7},
+          #         {"type": "neighborhood", "d_head": 64, "kernel_size": 7},
+          #         {"type": "global", "d_head": 64},
+          #     ]
+          #     dropout_rate: [0.0,0.0,0.0]
+
+    first_stage_config:
+      target: sgm.models.autoencoder.IdentityFirstStage
+
+    loss_fn_config:
+      target: sgm.modules.diffusionmodules.loss.TemporalResidualDiffusion_Alpha_YUV
+      params:
+        rgb2yuv_config:
+          target: sgm.util.rgb2yuv_s1s2_minus1_1
+        yuv_multiple: 1.0
+        attention_multiple: 3.0
+        unattention_multiple: 2.0
+        threshold: 0.999
+        batch2model_keys: ["dates"]
+        train_mask: "masks"
+        loss_weighting_config:
+          target: sgm.modules.diffusionmodules.loss_weighting.TemporalResidualEDMWeighting
+          params:
+            sigma_input: 1.0
+            sigma_mu: 1.0
+        # sigma_sampler_config:
+        #   target: sgm.modules.diffusionmodules.sigma_sampling.UniformSampling
+        #   params:
+        #     sigma_min: 0.001
+        #     sigma_max: 100
+        sigma_sampler_config:
+          target: sgm.modules.diffusionmodules.sigma_sampling.EDMSampling
+          params:
+            p_mean: -1.4
+            p_std: 1.4
+
+    optimizer_config:
+      target: sgm.optimzer.muon.MuonWithAuxAdam
+
+    scheduler_config:
+      target: torch.optim.lr_scheduler.LambdaLR
+      params:
+        lr_lambda:
+          target: sgm.lr_scheduler.LambdaWarmUpCosineScheduler
+          params:
+            warm_up_steps: 500
+            lr_min: 0.01
+            lr_max: 1.0
+            lr_start: 0.0
+            max_decay_steps: 50000
+            verbosity_interval: 0
+
+    sampler_config:
+      target: sgm.modules.diffusionmodules.sampling.TemporalResidualEulerEDMSampler_MAE_Lessmask
+      params:
+        # device: "cpu"
+        num_steps: 5
+        # s_churn: 5.0
+        # s_tmin: 0.0
+        # s_tmax: 100000000.0
+        # s_noise: 1.000
+        repaint_steps : 1
+        repaint_schurn : 0.0
+        threshold_diff : 0.5
+        
+        discretization_config:
+          target: sgm.modules.diffusionmodules.discretizer.EDMDiscretization
+          params:
+            sigma_min: 0.001
+            sigma_max: 100.0
+
+        mae_config:
+          target: rsimp-pretrain.models.MAE.Model
+          params:
+            configs:
+              image_size: 256
+              c_in: 13
+              d_model: 192
+              dropout: 0.2
+              patch_size: 16
+              num_heads: 12
+              encoder_layers: 12
+              decoder_layers: 8
+              mlp_ratio: 4.0
+              mask_ratio: 0.75
+              model_path: pretrained/imputation_mask0.5_MAE_eurosat_ms_dm192_bs16_lr0.001_Exp_0/checkpoint.pth
+
+    to_rgb_config:
+      target: sgm.util.S1andS2_to_rgb
+
+data:
+  target: sgm.data.base.DataModuleFromConfig
+  params:
+    batch_size: 8
+    num_workers: 8
+    wrap: True
+    # max_samples_count: 50
+    train:
+      target: sgm.data.sentinel.sentinel.SEN12MSCRTSInterface
+      params:
+        rescale: True
+        root: "/mnt/data2/sw/chenqa/RS/datasets/asiaEast/"
+        split: "train"
+        region: "asiaEast"
+        sampler: "random"
+        import_data_path: # "/mnt/data2/sw/chenqa/RS/datasets/ts12"
+
+    validation:
+      target: sgm.data.sentinel.sentinel.SEN12MSCRTSInterface
+      params:
+        rescale: True
+        root: "/mnt/data2/sw/chenqa/RS/datasets/asiaEast/"
+        split: "val"
+        region: "asiaEast"
+        sampler: "fix"
+        import_data_path: # "/mnt/data2/sw/chenqa/RS/datasets/ts12"
+
+    test:
+      target: sgm.data.sentinel.sentinel.SEN12MSCRTSInterface
+      params:
+        rescale: True
+        root: "/mnt/data2/sw/chenqa/RS/datasets/asiaEast/"
+        split: "test"
+        region: "asiaEast"
+        sampler: "fix"
+        import_data_path: # "/mnt/data2/sw/chenqa/RS/datasets/ts12"
+
+    predict:
+      target: sgm.data.sentinel.sentinel.SEN12MSCRTSInterface
+      params:
+        rescale: True
+        root: "/mnt/data2/sw/chenqa/RS/datasets/asiaEast/"
+        split: "test"
+        region: "asiaEast"
+        sampler: "fix"
+        import_data_path: # "/mnt/data2/sw/chenqa/RS/datasets/ts12"
+
+lightning:
+  modelcheckpoint:
+    params:
+      every_n_train_steps: 5000
+      monitor: "RMSE"
+
+  callbacks:
+    metrics_over_trainsteps_checkpoint:
+      params:
+        every_n_train_steps: 25000
+
+    image_logger:
+      target: main.ImageLogger
+      params:
+        enable_autocast: False
+        disabled: False
+        batch_frequency: 2000
+        max_images: 64
+        increase_log_steps: False
+        log_first_step: False
+        log_images_kwargs:
+          use_ema_scope: False
+          N: 64
+          n_rows: 16
+          return_intermediate: False
+          return_denoised: False
+          return_add_mu: False
+          return_add_noise: False
+          return_cond: False
+
+  # profiler: "simple"
+  # target: lightning.pytorch.profilers.SimpleProfiler
+  # params:
+  #   dirpath: "./"
+  #   filename: "perf_logs"
+
+  trainer:
+    # accelerator: "cpu"
+    devices: 5,
+    num_sanity_val_steps: 0
+    benchmark: True
+    accumulate_grad_batches: 1
+    max_epochs: 500
+    check_val_every_n_epoch: 2
+# No cloud mask

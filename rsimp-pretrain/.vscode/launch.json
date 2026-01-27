@@ -1,0 +1,36 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "MAE Imputation Mask 0.2",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/run.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--task_name", "imputation",
+                "--is_training", "1",
+                "--data_path", "./EuroSAT_MS/",
+                "--log_dir", "./logs/MAE/mask0.2/",
+                "--log_name", "log.txt",
+                "--model_id", "test",
+                "--mask_rate", "0.2",
+                "--model", "MAE",
+                "--data", "eurosat_rgb",
+                "--d_model", "192",
+                "--c_in", "3",
+                "--c_out", "3",
+                "--patience", "4",
+                "--batch_size", "16",
+                "--train_epoch", "100",
+                "--des", "Exp",
+                "--itr", "5",
+                "--learning_rate", "0.001",
+                "--gpu", "4"
+            ]
+        }
+    ]
+}

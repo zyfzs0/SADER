@@ -1,0 +1,172 @@
+model:
+  base_learning_rate: 1.0e-4
+  target: sgm.models.diffusion.ResidualDiffusionEngine
+  params:
+    input_key: "label"
+    mean_key: "cond_image"
+    compile_model: False
+    use_ema: True
+    use_flash_attn2: False
+    image_metrics: "evaluator"
+    # ckpt_path: "/path/to/your/checkpoint.ckpt" # if you want to train the model, this can be commented out
+
+    sigma_st_config:
+      target: sgm.modules.diffusionmodules.sigma2st.EDMSigma2St
+      params:
+        alpha: 3.0
+
+    denoiser_config:
+      target: sgm.modules.diffusionmodules.denoiser.ResidualDenoiser
+      params:
+        scaling_config:
+          target: sgm.modules.diffusionmodules.denoiser_scaling.ResidualEDMScaling
+          params:
+            sigma_input: 1.0
+            sigma_mu: 1.0
+
+    network_wrapper: "sgm.modules.diffusionmodules.wrappers.CloudRemovalWrapper"
+
+    network_config:
+      target: sgm.modules.diffusionmodules.k_diffusion.image_unet_TemporalAdm_v5.UNetModel 
+      params:
+        image_size: 256
+        in_channels: 8
+        model_channels : 64
+        noise_channels : 4
+        condition_net_multiple : 1
+        out_channels: 4
+        num_res_blocks: 2 # 4
+        attention_resolutions : [32] #[32,16,8]
+        sequence_length : 1
+        dropout: 0
+        channel_mult: [1, 2, 4,4]
+        attention_names: ['local','local','local','local']
+        middle_attention_patch: [1,1]
+        patch_size : [4,4]
+        conv_resample: True
+        dims: 2
+        use_checkpoint: False
+        use_fp16: False
+        num_heads: 1
+        num_head_channels: -1
+        num_heads_upsample: -1
+        use_scale_shift_norm: True
+        resblock_updown: True
+        use_new_attention_order: False
+        time_emb_fourier : True
+
+    conditioner_config:
+      target: sgm.modules.GeneralConditioner
+      params:
+        emb_models:
+          - is_trainable: True
+            input_key:  "cond_image"
+            ucg_rate: 0.0
+            target: sgm.modules.encoders.modules.IndentityEmbedder 
+
+
+    first_stage_config:
+      target: sgm.models.autoencoder.IdentityFirstStage
+
+    loss_fn_config:
+      target: sgm.modules.diffusionmodules.loss.ResidualDiffusionLoss
+      params:
+        loss_weighting_config:
+          target: sgm.modules.diffusionmodules.loss_weighting.ResidualEDMWeighting 
+          params:
+            sigma_input: 1.0
+            sigma_mu: 1.0
+        sigma_sampler_config:
+          target: sgm.modules.diffusionmodules.sigma_sampling.EDMSampling
+          params:
+            p_mean: -1.4
+            p_std: 1.4
+
+    sampler_config:
+      target: sgm.modules.diffusionmodules.sampling.ResidualEulerEDMSampler
+      params:
+        num_steps: 4
+        # s_churn: 0.1
+        # s_tmin: 0.0
+        # s_tmax: 100000000.0
+        # s_noise: 0.995
+
+        discretization_config:
+          target: sgm.modules.diffusionmodules.discretizer.EDMDiscretization
+          params:
+            sigma_min: 0.001
+            sigma_max: 100.0
+    
+    to_rgb_config:
+      target: sgm.util.nir_to_rgb
+
+data:
+  target: sgm.data.base.DataModuleFromConfig
+  params:
+    batch_size: 1 #4
+    num_workers: 8
+    wrap: True # whether to wrap the dataset with DataModuleFromConfig or not
+    train:
+      target: sgm.data.cuhk.image_datasets.TrainDataset
+      params:
+        datasets_dir: "/remote-home/share/dmb_nas/liuyi/C-CUHK/CUHK-CR1/" # download CUHK-CR1 dataset, and change the path of rgb images here
+        nir_datasets_dir: "/remote-home/share/dmb_nas/liuyi/C-CUHK/nir/CUHK-CR1/" # download CUHK-CR1 dataset, and change the path of nir images here
+        isTrain: True # True for training, False for validation and testing
+
+    validation:
+      target: sgm.data.cuhk.image_datasets.TrainDataset
+      params:
+        datasets_dir: "/remote-home/share/dmb_nas/liuyi/C-CUHK/CUHK-CR1/"
+        nir_datasets_dir: "/remote-home/share/dmb_nas/liuyi/C-CUHK/nir/CUHK-CR1/"
+        isTrain: False
+
+    test:
+      target: sgm.data.cuhk.image_datasets.TrainDataset
+      params:
+        datasets_dir: "/remote-home/share/dmb_nas/liuyi/C-CUHK/CUHK-CR1/"
+        nir_datasets_dir: "/remote-home/share/dmb_nas/liuyi/C-CUHK/nir/CUHK-CR1/"
+        isTrain: False
+
+    predict:
+      target: sgm.data.cuhk.image_datasets.TrainDataset
+      params:
+        datasets_dir: "/remote-home/share/dmb_nas/liuyi/C-CUHK/CUHK-CR1/"
+        nir_datasets_dir: "/remote-home/share/dmb_nas/liuyi/C-CUHK/nir/CUHK-CR1/"
+        isTrain: False
+
+lightning:
+  modelcheckpoint:
+    params:
+      every_n_train_steps: 1000
+      monitor: "RMSE"
+
+  callbacks:
+    metrics_over_trainsteps_checkpoint:
+      params:
+        every_n_train_steps: 500
+
+    image_logger:
+      target: main.ImageLogger
+      params:
+        disabled: False
+        batch_frequency: 500
+        max_images: 64
+        increase_log_steps: False
+        log_first_step: False
+        log_images_kwargs:
+          use_ema_scope: False
+          N: 64
+          n_rows: 16
+          return_intermediate: True
+          return_denoised: True
+          return_add_mu: True
+          return_add_noise: True
+          return_cond: True
+
+  trainer:
+    devices: 2,3, # The GPUs you want to use
+    num_sanity_val_steps: 0
+    benchmark: True
+    accumulate_grad_batches: 2
+    check_val_every_n_epoch: 5
+    max_epochs: 500

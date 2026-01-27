@@ -1,0 +1,42 @@
+# extensions
+*.egg-info
+*.py[cod]
+
+
+# envs
+.pt13
+.pt2
+
+# directories
+/checkpoints
+/dist
+/outputs
+/build
+/src
+/logs/
+/.data/
+/save_logs/
+/results/
+/.vscode/
+/__pycache__/
+/*-logs/
+flash*
+natten*
+*.png
+cuhkv1-emrdm
+paper_images/
+
+**/.ipynb_checkpoints/*
+**/.vscode/*
+**/__pycache__/*
+**/srun_outputs/*
+**/checkpoints/*
+
+*.sh
+
+.history
+pretrained/
+*logs/
+ts_design_mask/
+ts_newdesign_lessmask/
+*weights/
