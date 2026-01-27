@@ -1100,7 +1100,7 @@ class TemporalResidualDiffusionEngine(ResidualDiffusionEngine):
         # fig, ax = plt.subplots(2, mu.shape[1], figsize=(0.03 * mu.shape[3], 0.019 * mu.shape[4]))  
         # attn_rgb_full_path = path + image_path.replace(image_path_extension, "_attn.png")
         # im = None
-        if False: # output?
+        if True: # output need to be scaled
             for i in range(mu.shape[1]):
                 mu_rgb = self.scale_01(mu[:,i])
                 mu_rgb_path = image_path.replace(image_path_extension, f"_timestep{i}.png")

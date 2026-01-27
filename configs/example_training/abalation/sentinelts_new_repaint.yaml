@@ -7,8 +7,8 @@ model:
     compile_model: False
     use_ema: True
     use_flash_attn2: True
-    ckpt_path: "/mnt/data2/sw/chenqa/RS/TGRS-CREDM/tscompare-logs/2025-09-25T21-09-12_example_training-sentinelts/checkpoints/last.ckpt"
-    
+    ckpt_path: "/mnt/data2/sw/chenqa/RS/TGRS-CREDM/tsdesign-logs/0diffcr/checkpoints/last.ckpt"
+
     sigma_st_config:
       target: sgm.modules.diffusionmodules.sigma2st.EDMSigma2St
       params:
@@ -26,44 +26,43 @@ model:
     network_wrapper: "sgm.modules.diffusionmodules.wrappers.TemporalCloudRemovalWrapper"
 
     network_config:
-      target: sgm.modules.diffusionmodules.k_diffusion.image_transformer.ImageTemporalTransformerDenoiserInterface
+      target: sgm.modules.diffusionmodules.k_diffusion.image_unet_TemporalAdm_Final.UNetModel #
       params:
-        in_channels:  28 # 26
+        image_size: 256
+        in_channels: 26
+        model_channels: 64
+        noise_channels: 13
+        condition_net_multiple: 1
         out_channels: 13
-        patch_size: [2,2]
-        widths: [256,512,768]
-        depths: [2,2,16]
-        d_ffs: [512,1024,1536]
-        self_attns: [
-            {"type": "neighborhood", "d_head": 64, "kernel_size": 7},
-            {"type": "neighborhood", "d_head": 64, "kernel_size": 7},
-            {"type": "global", "d_head": 64},
-        ]
-        dropout_rate: [0.0,0.0,0.0]
-        mapping_depth: 2
-        mapping_width: 768
-        mapping_d_ff: 1536
-        mapping_dropout_rate: 0.1
-        temporal_n_heads: 16
-        temporal_d_model: 768
-        temporal_d_k: 48
-        temporal_positional_encoding: True
-        temporal_agg_mode: "att_group"
-        temporal_dropout: 0.0
-        temporal_use_drouput: False
-        temporal_mlp: [768, 1536]
-        pad_value: 0
-        tanh: False
-        # control_mode:  "sum" # "conv"
+        num_res_blocks: 2 # 4
+        attention_resolutions: [32] #[32,16,8]
+        sequence_length: 3
+        dropout: 0.1
+        channel_mult: [1, 2, 4, 8]
+        attention_names: ["local", "local", "local", "local"]
+        patch_size: [4, 4]
+        kernel_size: [3, 3]
+        neighbor_heads: 16
+        conv_resample: True
+        dims: 2
+        use_checkpoint: False
+        use_fp16: False
+        num_heads: 1
+        num_head_channels: -1
+        num_heads_upsample: -1
+        use_scale_shift_norm: True
+        resblock_updown: True
+        use_new_attention_order: False
+        time_emb_fourier: True
 
     conditioner_config:
       target: sgm.modules.GeneralConditioner
       params:
         emb_models:
           - is_trainable: True
-            input_key:  "S1S2"
+            input_key: "S2"
             ucg_rate: 0.0
-            target: sgm.modules.encoders.modules.IndentityEmbedder 
+            target: sgm.modules.encoders.modules.IndentityEmbedder
           # - is_trainable: True
           #   input_key:  "S1"
           #   ucg_rate: 0.0
@@ -85,8 +84,14 @@ model:
       target: sgm.models.autoencoder.IdentityFirstStage
 
     loss_fn_config:
-      target: sgm.modules.diffusionmodules.loss.TemporalResidualDiffusionLoss
+      target: sgm.modules.diffusionmodules.loss.TemporalResidualDiffusion_Alpha_YUV
       params:
+        rgb2yuv_config:
+          target: sgm.util.rgb2yuv_s1s2_minus1_1
+        yuv_multiple: 1.0
+        attention_multiple: 3.0
+        unattention_multiple: 2.0
+        threshold: 0.999
         batch2model_keys: ["dates"]
         loss_weighting_config:
           target: sgm.modules.diffusionmodules.loss_weighting.TemporalResidualEDMWeighting
@@ -104,6 +109,22 @@ model:
             p_mean: -1.4
             p_std: 1.4
 
+    optimizer_config:
+      target: sgm.optimzer.muon.MuonWithAuxAdam
+
+    scheduler_config:
+      target: torch.optim.lr_scheduler.LambdaLR
+      params:
+        lr_lambda:
+          target: sgm.lr_scheduler.LambdaWarmUpCosineScheduler
+          params:
+            warm_up_steps: 500
+            lr_min: 0.01
+            lr_max: 1.0
+            lr_start: 0.0
+            max_decay_steps: 50000
+            verbosity_interval: 0
+
     sampler_config:
       target: sgm.modules.diffusionmodules.sampling.TemporalResidualEulerEDMSampler
       params:
@@ -119,7 +140,7 @@ model:
           params:
             sigma_min: 0.001
             sigma_max: 100.0
-    
+
     to_rgb_config:
       target: sgm.util.S1andS2_to_rgb
 
@@ -135,7 +156,7 @@ data:
       params:
         rescale: True
         root: "/mnt/data2/sw/chenqa/RS/datasets/asiaEast/"
-        split: "train" 
+        split: "train"
         region: "asiaEast"
         sampler: "random"
         import_data_path: # "/mnt/data2/sw/chenqa/RS/datasets/ts12"
@@ -145,7 +166,7 @@ data:
       params:
         rescale: True
         root: "/mnt/data2/sw/chenqa/RS/datasets/asiaEast/"
-        split: "val" 
+        split: "val"
         region: "asiaEast"
         sampler: "fix"
         import_data_path: # "/mnt/data2/sw/chenqa/RS/datasets/ts12"
@@ -155,7 +176,7 @@ data:
       params:
         rescale: True
         root: "/mnt/data2/sw/chenqa/RS/datasets/asiaEast/"
-        split: "test" 
+        split: "test"
         region: "asiaEast"
         sampler: "fix"
         import_data_path: # "/mnt/data2/sw/chenqa/RS/datasets/ts12"
@@ -165,11 +186,10 @@ data:
       params:
         rescale: True
         root: "/mnt/data2/sw/chenqa/RS/datasets/asiaEast/"
-        split: "test" 
+        split: "test"
         region: "asiaEast"
         sampler: "fix"
         import_data_path: # "/mnt/data2/sw/chenqa/RS/datasets/ts12"
-
 
 lightning:
   modelcheckpoint:
@@ -200,19 +220,19 @@ lightning:
           return_add_mu: True
           return_add_noise: True
           return_cond: True
-  
+
   # profiler: "simple"
-    # target: lightning.pytorch.profilers.SimpleProfiler
-    # params:
-    #   dirpath: "./"
-    #   filename: "perf_logs"
+  # target: lightning.pytorch.profilers.SimpleProfiler
+  # params:
+  #   dirpath: "./"
+  #   filename: "perf_logs"
 
   trainer:
     # accelerator: "cpu"
-    devices: 0,
+    devices: 5,
     num_sanity_val_steps: 0
     benchmark: True
     accumulate_grad_batches: 1
     max_epochs: 500
     check_val_every_n_epoch: 2
-    
+# No cloud mask

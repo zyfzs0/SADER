@@ -3,13 +3,11 @@ model:
   target: sgm.models.diffusion.TemporalResidualDiffusionEngine
   params:
     input_key: "target"
-    mean_key: "S2_double"
-    masks_key: "masks"
-    mask_key: "masks"
+    mean_key: "S2"
     compile_model: False
     use_ema: True
     use_flash_attn2: True
-    #ckpt_path: "/mnt/data2/sw/chenqa/RS/TGRS-CREDM/ts_design_mask/2025-10-15T04-38-05_example_training-sentinelts_new_mask/checkpoints/last.ckpt"
+    ckpt_path: "/mnt/data2/sw/chenqa/RS/TGRS-CREDM/tsdesign-logs/0diffcr/checkpoints/last.ckpt"
 
     sigma_st_config:
       target: sgm.modules.diffusionmodules.sigma2st.EDMSigma2St
@@ -31,19 +29,19 @@ model:
       target: sgm.modules.diffusionmodules.k_diffusion.image_unet_TemporalAdm_Final.UNetModel #
       params:
         image_size: 256
-        in_channels: 40
+        in_channels: 26
         model_channels: 64
         noise_channels: 13
         condition_net_multiple: 1
         out_channels: 13
         num_res_blocks: 2 # 4
         attention_resolutions: [32] #[32,16,8]
-        sequence_length: 6
+        sequence_length: 3
         dropout: 0.1
         channel_mult: [1, 2, 4, 8]
         attention_names: ["local", "local", "local", "local"]
         patch_size: [4, 4]
-        kernel_size: [7, 7]
+        kernel_size: [3, 3]
         neighbor_heads: 16
         conv_resample: True
         dims: 2
@@ -62,7 +60,7 @@ model:
       params:
         emb_models:
           - is_trainable: True
-            input_key: "S2_combined_double"
+            input_key: "S2"
             ucg_rate: 0.0
             target: sgm.modules.encoders.modules.IndentityEmbedder
           # - is_trainable: True
@@ -95,7 +93,6 @@ model:
         unattention_multiple: 2.0
         threshold: 0.999
         batch2model_keys: ["dates"]
-        train_mask: "masks"
         loss_weighting_config:
           target: sgm.modules.diffusionmodules.loss_weighting.TemporalResidualEDMWeighting
           params:
@@ -150,7 +147,7 @@ model:
 data:
   target: sgm.data.base.DataModuleFromConfig
   params:
-    batch_size: 8
+    batch_size: 1
     num_workers: 8
     wrap: True
     # max_samples_count: 50
@@ -169,7 +166,7 @@ data:
       params:
         rescale: True
         root: "/mnt/data2/sw/chenqa/RS/datasets/asiaEast/"
-        split: "test"
+        split: "val"
         region: "asiaEast"
         sampler: "fix"
         import_data_path: # "/mnt/data2/sw/chenqa/RS/datasets/ts12"
@@ -218,11 +215,11 @@ lightning:
           use_ema_scope: False
           N: 64
           n_rows: 16
-          return_intermediate: False
-          return_denoised: False
-          return_add_mu: False
-          return_add_noise: False
-          return_cond: False
+          return_intermediate: True
+          return_denoised: True
+          return_add_mu: True
+          return_add_noise: True
+          return_cond: True
 
   # profiler: "simple"
   # target: lightning.pytorch.profilers.SimpleProfiler
@@ -232,7 +229,7 @@ lightning:
 
   trainer:
     # accelerator: "cpu"
-    devices: 2,
+    devices: 5,
     num_sanity_val_steps: 0
     benchmark: True
     accumulate_grad_batches: 1
