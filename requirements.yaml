@@ -479,4 +479,3 @@ dependencies:
       - yacs==0.1.8
       - yarl==1.9.4
       - zipp==3.19.2
-prefix: /home/sw/anaconda3/envs/credm
