@@ -16,7 +16,7 @@ conda install pytorch==2.2.0 torchvision==0.17.0 torchaudio==2.2.0 pytorch-cuda=
 其余依赖请参照 requirements.txt 安装。
 
 ### 数据集 Dataset
-支持四个数据集： CUHK-CR1, Sen2\_MTC\_New
+支持两个数据集： Sen2\_MTC\_New 、 TS
 ### 训练 Train
 配置文件位于 ./configs/example_training/：
 ```
