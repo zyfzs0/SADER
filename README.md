@@ -100,7 +100,7 @@ The `[yaml_file_name].yaml` files are the same as those in the testing process. 
 
 
 ## :email:Contact
-If you have encountered any problems, feel free to contact author via the email <a href="mailto:yifanzhg@umich.edu">yifanzhg@umich.edu</a>. 
+If you have encountered any problems, feel free to contact author via the email <a href="mailto:yifanzhg@umich.edu">yifanzhg@umich.edu</a> or <a href="mailto:2250951@tongji.edu.cn">2250951@tongji.edu.cn</a>. 
 
 ## :book:BibTeX
 ```bibtex
