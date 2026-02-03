@@ -51,7 +51,7 @@ conda activate sader
 
 
 ### :pushpin:Dataset
-We use two datasets:SEN12MS-CR and Sen2\_MTC\_New. You need to download these datasets first. 
+We use two datasets: SEN12MS-CR-TS and Sen2\_MTC\_New. You need to download these datasets first. 
 
 We provide the downloading URLs of these datasets as follows:
 
