@@ -14,7 +14,7 @@
 <div align="center">
     <a href="https://github.com/zyfzs0/SADER"><img src="https://img.shields.io/static/v1?label=Project&message=Github&color=blue&logo=github-pages"></a> &ensp;
     <a href="./README_zh.md"><img src="https://img.shields.io/badge/项目简介-简体中文-blue"></a> &ensp;
-    <a href="https://arxiv.org/abs/XXXX.XXXXX"><img src="https://img.shields.io/static/v1?label=Arxiv&message=SADER&color=red&logo=arxiv"></a> &ensp;
+    <a href="https://arxiv.org/abs/2602.00536"><img src="https://img.shields.io/static/v1?label=Arxiv&message=SADER&color=red&logo=arxiv"></a> &ensp;
     <img src="https://img.shields.io/github/stars/zyfzs0/SADER?style=flat&logo=github"> &ensp;
     <a href="https://github.com/zyfzs0/SADER/issues"> <img src="https://img.shields.io/github/issues/zyfzs0/SADER?style=flat&logo=github"> </a> &ensp;
     <a href="https://github.com/zyfzs0/SADER/pulls"> <img src="https://img.shields.io/github/issues-pr/zyfzs0/SADER?style=flat&logo=github"> </a> &ensp;
@@ -104,7 +104,13 @@ If you have encountered any problems, feel free to contact author via the email 
 
 ## :book:BibTeX
 ```bibtex
-@article{
-
+@misc{zhang2026saderstructureawarediffusionframework,
+      title={SADER: Structure-Aware Diffusion Framework with DEterministic Resampling for Multi-Temporal Remote Sensing Cloud Removal}, 
+      author={Yifan Zhang and Qian Chen and Yi Liu and Wengen Li and Jihong Guan},
+      year={2026},
+      eprint={2602.00536},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2602.00536}, 
 }
 ```
