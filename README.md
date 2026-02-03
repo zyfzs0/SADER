@@ -57,7 +57,7 @@ We provide the downloading URLs of these datasets as follows:
 
 |Dataset|Type| URL |
 |-------|----|-----|
-|SEN12MS-CR| Mono-Temporal| [https://patricktum.github.io/cloud_removal/sen12mscr/](https://patricktum.github.io/cloud_removal/sen12mscr/)|
+|SEN12MS-CR-TS| Multi-Temporal| [https://patricktum.github.io/cloud_removal/sen12mscrts/](https://patricktum.github.io/cloud_removal/sen12mscrts/)|
 |Sen2\_MTC\_New| Multi-Temporal|[https://github.com/come880412/CTGAN](https://github.com/come880412/CTGAN)|
 
 For fast starting, you can only download the testing dataset and run the testing instructions given below.
