@@ -39,7 +39,7 @@ python main.py --base configs/example_training/[yaml_file_name].yaml --enable_tf
 ```
 `[yaml_file_name].yaml`与训练和测试过程相同
 ### 其他 Others
-如果有专业问题或者学术合作请联系**张一凡同学**
+如果有专业问题或者学术合作请联系**YIFAN ZHANG**
 
 联系方式：
 
