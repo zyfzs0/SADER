@@ -104,13 +104,10 @@ If you have encountered any problems, feel free to contact author via the email 
 
 ## :book:BibTeX
 ```bibtex
-@misc{zhang2026saderstructureawarediffusionframework,
-      title={SADER: Structure-Aware Diffusion Framework with DEterministic Resampling for Multi-Temporal Remote Sensing Cloud Removal}, 
-      author={Yifan Zhang and Qian Chen and Yi Liu and Wengen Li and Jihong Guan},
-      year={2026},
-      eprint={2602.00536},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2602.00536}, 
+@article{zhang2026sader,
+  title={SADER: Structure-Aware Diffusion Framework with DEterministic Resampling for Multi-Temporal Remote Sensing Cloud Removal},
+  author={Zhang, Yifan and Chen, Qian and Liu, Yi and Li, Wengen and Guan, Jihong},
+  journal={arXiv preprint arXiv:2602.00536},
+  year={2026}
 }
 ```
