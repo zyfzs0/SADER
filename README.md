@@ -1,4 +1,6 @@
-# **SADER**: Structure-Aware Diffusion Framework with Deterministic Resampling for Multi-Temporal Remote Sensing Cloud Removal
+<h1 align="center">
+SADER: Structure-Aware Diffusion Framework with Deterministic Resampling for Multi-Temporal Remote Sensing Cloud Removal
+</h1>
 
 <div align="center">
   Yifan Zhang<sup>1,*</sup>, Qian Chen<sup>2,*</sup>, Yi Liu<sup>2,*</sup>, Wengen Li<sup>2</sup>, Jihong Guan<sup>2</sup><br>
