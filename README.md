@@ -7,6 +7,8 @@
   <sub>*Equal contribution</sub>
 </div>
 
+<br>
+
 <div align="center">
   <img src="assets/architecture.png" width="95%" alt="SADER framework: multi-temporal fusion, cloud-aware attention, and deterministic resampling">
 </div>
@@ -19,6 +21,8 @@
     <a href="https://github.com/zyfzs0/SADER/issues"> <img src="https://img.shields.io/github/issues/zyfzs0/SADER?style=flat&logo=github"> </a> &ensp;
     <a href="https://github.com/zyfzs0/SADER/pulls"> <img src="https://img.shields.io/github/issues-pr/zyfzs0/SADER?style=flat&logo=github"> </a> &ensp;
 </div>
+
+<br>
 
 This is the official repository for **SADER**, a structure-aware diffusion framework for multi-temporal remote sensing cloud removal that leverages a scalable multi-temporal conditional network, a cloud-aware attention loss, and a deterministic resampling strategy to achieve high-fidelity and reproducible cloud-free reconstruction.
 
