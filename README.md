@@ -32,7 +32,14 @@ This is the official repository for **SADER**, a structure-aware diffusion frame
 
 ## :chart_with_upwards_trend:Experimental Results
 
-### 1. Quantitative Comparison on Sen2_MTC_New
+<table>
+<tr>
+<th align="center">1. Sen2_MTC_New</th>
+<th align="center">2. SEN12MS-CR-TS(EA)</th>
+</tr>
+<tr>
+<td valign="top">
+
 | Method | PSNR ↑ | SSIM ↑ | LPIPS ↓ |
 | :--- | :---: | :---: | :---: |
 | McGAN (2017) | 17.448 | 0.513 | 0.447 |
@@ -57,7 +64,9 @@ This is the official repository for **SADER**, a structure-aware diffusion frame
 | **Ours (SADER)** | **20.941** | **0.729** | **0.228** |
 | *Improvement* | *+3.42%* | *+2.97%* | *-6.56%* |
 
-### 2. Quantitative Comparison on SEN12MS-CR-TS(EA)
+</td>
+<td valign="top">
+
 | Method | PSNR ↑ | SSIM ↑ | SAM (°) ↓ |
 | :--- | :---: | :---: | :---: |
 | McGAN (2017) | 25.279 | 0.819 | 10.051 |
@@ -78,6 +87,10 @@ This is the official repository for **SADER**, a structure-aware diffusion frame
 | EMRDM (2025) | <u>*29.320*</u> | <u>*0.926*</u> | <u>*5.933*</u> |
 | **Ours (SADER)** | **31.234** | **0.937** | **5.885** |
 | *Improvement* | *+6.53%* | *+1.19%* | *-0.81%* |
+
+</td>
+</tr>
+</table>
 
 ## :tada:Usage
 ### :wrench:Setup
