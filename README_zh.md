@@ -16,7 +16,7 @@ conda install pytorch==2.2.0 torchvision==0.17.0 torchaudio==2.2.0 pytorch-cuda=
 其余依赖请参照 requirements.txt 安装。
 
 ### 数据集 Dataset
-支持两个数据集： Sen2\_MTC\_New 、 SEN12MS-CR-TS
+支持两个数据集： Sen2\_MTC\_New 、 SEN12MS-CR-TS(EA)
 
 > **关于 SEN12MS-CR-TS (东亚子集 EA) 的说明**：在 SEN12MS-CR-TS 东亚子集的评估中，测试集具体采用标准测试区域 `ROIs1868/73`（包含 240 组多时相测试序列样本）进行评测。
 
