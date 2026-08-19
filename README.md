@@ -66,6 +66,8 @@ We provide the downloading URLs of these datasets as follows:
 |SEN12MS-CR-TS| Multi-Temporal| [https://patricktum.github.io/cloud_removal/sen12mscrts/](https://patricktum.github.io/cloud_removal/sen12mscrts/)|
 |Sen2\_MTC\_New| Multi-Temporal|[https://github.com/come880412/CTGAN](https://github.com/come880412/CTGAN)|
 
+> **Note on SEN12MS-CR-TS (Eastern Asia / EA)**: For evaluation on the Eastern Asia subset of SEN12MS-CR-TS, the test set specifically evaluates on the representative region `ROIs1868/73` (comprising 240 multi-temporal sequence samples).
+
 For fast starting, you can only download the testing dataset and run the testing instructions given below.
 
 ### :mag_right:Configurations
