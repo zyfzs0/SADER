@@ -18,6 +18,7 @@ SADER: Structure-Aware Diffusion Framework with Deterministic Resampling for Mul
 <div align="center">
     <a href="https://github.com/zyfzs0/SADER"><img src="https://img.shields.io/static/v1?label=Project&message=Github&color=blue&logo=github-pages"></a> &ensp;
     <a href="./README_zh.md"><img src="https://img.shields.io/badge/项目简介-简体中文-blue"></a> &ensp;
+    <a href="https://huggingface.co/zyfz0um/SADER"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Weights-FFD21E"></a> &ensp;
     <a href="https://arxiv.org/abs/2602.00536"><img src="https://img.shields.io/static/v1?label=Arxiv&message=SADER&color=red&logo=arxiv"></a> &ensp;
     <img src="https://img.shields.io/github/stars/zyfzs0/SADER?style=flat&logo=github"> &ensp;
     <a href="https://github.com/zyfzs0/SADER/issues"> <img src="https://img.shields.io/github/issues/zyfzs0/SADER?style=flat&logo=github"> </a> &ensp;
@@ -91,6 +92,24 @@ This is the official repository for **SADER**, a structure-aware diffusion frame
 </td>
 </tr>
 </table>
+
+## :floppy_disk: Pretrained Weights
+
+The SADER checkpoints and the MAE checkpoints used for deterministic resampling are publicly available on [Hugging Face](https://huggingface.co/zyfz0um/SADER).
+
+| Dataset | SADER checkpoint | MAE checkpoint |
+| :--- | :--- | :--- |
+| Sen2\_MTC\_New | `newdesign/final_ckpt/last.ckpt` | `pretrained/imputation_mask0.5_MAE_eurosat_rgb_dm192_bs16_lr0.001_Exp_0/checkpoint.pth` |
+| SEN12MS-CR-TS(EA) | `tsdesign/final_ckpt/last.ckpt` | `pretrained/imputation_mask0.5_MAE_eurosat_ms_dm192_bs16_lr0.001_Exp_0/checkpoint.pth` |
+
+Download all released weights with:
+
+```bash
+pip install -U huggingface_hub
+hf download zyfz0um/SADER --local-dir ./sader_weights
+```
+
+Set `model.ckpt_path` to the downloaded SADER checkpoint and set `sampler_config.params.mae_config.params.configs.model_path` to the corresponding MAE checkpoint. See the [Hugging Face model card](https://huggingface.co/zyfz0um/SADER) for selective download commands and the complete configuration mapping.
 
 ## :tada:Usage
 ### :wrench:Setup

@@ -63,6 +63,24 @@
 </tr>
 </table>
 
+## 预训练权重 Pretrained Weights
+
+SADER 主模型权重以及确定性重采样所使用的 MAE 权重已在 [Hugging Face](https://huggingface.co/zyfz0um/SADER) 公开。
+
+| 数据集 | SADER 主模型权重 | MAE 权重 |
+| :--- | :--- | :--- |
+| Sen2\_MTC\_New | `newdesign/final_ckpt/last.ckpt` | `pretrained/imputation_mask0.5_MAE_eurosat_rgb_dm192_bs16_lr0.001_Exp_0/checkpoint.pth` |
+| SEN12MS-CR-TS(EA) | `tsdesign/final_ckpt/last.ckpt` | `pretrained/imputation_mask0.5_MAE_eurosat_ms_dm192_bs16_lr0.001_Exp_0/checkpoint.pth` |
+
+可使用以下命令下载全部已公开权重：
+
+```bash
+pip install -U huggingface_hub
+hf download zyfz0um/SADER --local-dir ./sader_weights
+```
+
+下载后，将配置文件中的 `model.ckpt_path` 指向对应的 SADER 主模型权重，并将 `sampler_config.params.mae_config.params.configs.model_path` 指向对应的 MAE 权重。单独下载某个文件的命令及完整配置对应关系见 [Hugging Face 模型卡](https://huggingface.co/zyfz0um/SADER)。
+
 ## 使用方法 Usage
 ### 环境配置 Setup
 根目录下提供了 requirements.txt 文件，包含我们使用的全部依赖包。但不建议直接运行 pip install -r requirements.txt，因部分包存在复杂依赖关系。建议优先安装核心依赖（如 `torch`、`lightning`）。
